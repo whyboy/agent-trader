@@ -1,6 +1,6 @@
 """
 IndicatorManager: 消费 CandleLike（带 channel），按周期维护 K 线缓冲与指标，
-初始化时根据配置注册所有指标（sma/ema/macd/atr/volume_sma 等），
+初始化时根据配置注册所有指标（sma/ema/macd/volume_sma/rsi/kdj 等），
 对每根 K 线计算所有指标，生成 SnapshotProcessedV1 放入队列，供 StrategyManager 持续读取并发出买卖信号。
 """
 
@@ -11,7 +11,6 @@ from queue import Empty, Queue
 from typing import Any, Dict, List, Optional, Type
 
 from indicators.example.base import BaseIndicator, CandleLike
-from indicators.example.atr import ATRIndicator
 from indicators.example.ma import EMAIndicator, SMAIndicator
 from indicators.example.macd import MACDIndicator
 from indicators.example.volume import VolumeSMAIndicator
@@ -26,7 +25,6 @@ BUILTIN_INDICATORS: Dict[str, Type[BaseIndicator]] = {
     "sma": SMAIndicator,
     "ema": EMAIndicator,
     "macd": MACDIndicator,
-    "atr": ATRIndicator,
     "volume_sma": VolumeSMAIndicator,
     "rsi": RSIIndicator,
     "kdj": KDJIndicator,

@@ -31,7 +31,7 @@ class AgentRunnerConfig:
 class StrategyConfig:
     """策略配置：Pipeline 用于直接创建 StrategyManager。"""
 
-    strategy_type: str | None = None  # "breakout" | "trend_macd" | None 表示 hold
+    strategy_type: str | None = None  # "reversal_rsi" | None 表示 hold
     strategy_params: Dict[str, Any] = field(default_factory=dict)
     history_size: int = 100
 
