@@ -6,6 +6,7 @@ from queue import Queue
 from agent import AgentManager
 from config import ServiceConfig
 from indicators import IndicatorManager
+from order import OrderManager
 from strategy import StrategyManager
 from websocket.ws_client_okx import OkxWsClient
 
@@ -19,6 +20,7 @@ class Pipeline:
     - AgentManager：产出 SnapshotProcessedV2 写入 v2 队列（当前为 default）
     - StrategyManager：按 strategy_type 创建策略，从 v2 队列取 SnapshotProcessedV2，
       各策略内部按规则生成 Signal，写入 signal_queue
+    - OrderManager：从 signal_queue 消费信号，策略执行完成后执行下单（或 dry_run 仅日志）
     """
 
     def __init__(self, config: ServiceConfig) -> None:
@@ -31,6 +33,7 @@ class Pipeline:
         self._indicator_manager: IndicatorManager = None
         self._agent_manager: AgentManager = None
         self._strategy_manager: StrategyManager = None
+        self._order_manager: OrderManager = None
 
     def start(self) -> None:
         okx = self.config.okx
@@ -55,14 +58,15 @@ class Pipeline:
 
         sc = self.config.strategy
         self._strategy_manager = StrategyManager(
-            input_queue=self.snapshot_processed_v2_queue,
-            output_queue=self.signal_queue,
-            strategy_type=sc.strategy_type or "hold",
+            okx.symbol,
+            self.snapshot_processed_v2_queue,
+            self.signal_queue,
+            sc.strategy_type or "hold",
             strategy_params=sc.strategy_params,
             history_size=sc.history_size,
             trigger_timeframe=trigger_ch,
         )
-
+        
         agent_cfg = self.config.agent
         self._agent_manager = AgentManager(
             input_queue=self.snapshot_processed_v1_queue,
@@ -72,14 +76,21 @@ class Pipeline:
             trigger_interval_seconds=agent_cfg.trigger_interval_seconds,
             trigger_on_candle=agent_cfg.trigger_on_candle,
         )
+
+        self._order_manager = OrderManager(input_queue=self.signal_queue)
+
         self._agent_manager.start()
         
         self._ws.start()
         self._indicator_manager.start()
         self._strategy_manager.start()
+        self._order_manager.start()
         logger.info("Pipeline started: %s %s", okx.symbol, channels)
 
     def stop(self) -> None:
+        if self._order_manager is not None:
+            self._order_manager.stop()
+            self._order_manager = None
         if self._strategy_manager is not None:
             self._strategy_manager.stop()
             self._strategy_manager = None

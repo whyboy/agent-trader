@@ -50,6 +50,7 @@ class StrategyManager:
 
     def __init__(
         self,
+        symbol: str,
         input_queue: Queue,
         output_queue: Queue,
         strategy_type: str,
@@ -57,6 +58,7 @@ class StrategyManager:
         history_size: int = 100,
         trigger_timeframe: str = None,
     ) -> None:
+        self._symbol = symbol
         self._input_queue = input_queue
         self._output_queue = output_queue
         self._strategy_type = strategy_type or "hold"
@@ -97,6 +99,7 @@ class StrategyManager:
                 context = self._v2_to_context(v2, trigger_tf)
                 signal: Signal = self._strategy.evaluate(context)
                 out = signal.to_dict()
+                out["symbol"] = self._symbol
                 snap = context.market_snapshot
                 out["snapshot_ts"] = snap.ts if snap else v2.snapshot_processed_v1.ts
                 self._output_queue.put_nowait(out)

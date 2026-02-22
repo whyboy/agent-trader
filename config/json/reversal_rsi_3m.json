@@ -1,8 +1,8 @@
 {
   "okx": {
     "url": "wss://wspri.coinall.ltd:8443/ws/v5/public",
-    "symbol": "BTC-USDT",
-    "channels": ["candle3m"],
+    "symbol": "XAUT-USDT",
+    "channels": ["candle1m"],
     "ping_interval": 25,
     "reconnect_delay": 5
   },
