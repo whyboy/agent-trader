@@ -1,6 +1,5 @@
-"""Example strategies: breakout, trend_macd, and shared ai_trend helpers."""
+"""Example strategies: reversal_rsi."""
 
-from strategy.example.breakout import BreakoutStrategy
-from strategy.example.trend_macd import TrendMACDStrategy
+from strategy.example.reversal_rsi import ReversalRSIStrategy
 
-__all__ = ["BreakoutStrategy", "TrendMACDStrategy"]
+__all__ = ["ReversalRSIStrategy"]

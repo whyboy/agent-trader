@@ -3,7 +3,6 @@
 from indicators.example.base import BaseIndicator, CandleLike
 from indicators.example.ma import EMAIndicator, SMAIndicator
 from indicators.example.macd import MACDIndicator
-from indicators.example.atr import ATRIndicator
 from indicators.example.volume import VolumeSMAIndicator
 from indicators.indicator_manager import IndicatorManager
 from indicators.data import (
@@ -18,7 +17,6 @@ __all__ = [
     "SMAIndicator",
     "EMAIndicator",
     "MACDIndicator",
-    "ATRIndicator",
     "VolumeSMAIndicator",
     "IndicatorManager",
     "MarketSnapshot",

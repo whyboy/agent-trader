@@ -11,10 +11,8 @@ from queue import Empty, Queue
 from typing import Any, Dict, List, Optional, Type
 
 from indicators import SnapshotProcessedV1, SnapshotProcessedV2
-from strategy.data import Signal, StrategyContext
-from strategy.example.breakout import BreakoutStrategy
+from strategy.data import Signal, SignalAction, StrategyContext
 from strategy.example.hold_strategy import HoldStrategy
-from strategy.example.trend_macd import TrendMACDStrategy
 from strategy.example.reversal_rsi import ReversalRSIStrategy
 
 logger = logging.getLogger(__name__)
@@ -35,8 +33,6 @@ class StrategyManager:
             return
         cls._REGISTRY.update({
             "hold": HoldStrategy,
-            "breakout": BreakoutStrategy,
-            "trend_macd": TrendMACDStrategy,
             "reversal_rsi": ReversalRSIStrategy,
         })
 
@@ -97,7 +93,9 @@ class StrategyManager:
                 self._trigger_timeframe = trigger_tf
             try:
                 context = self._v2_to_context(v2, trigger_tf)
-                signal: Signal = self._strategy.evaluate(context)
+                signal: Optional[Signal] = self._strategy.evaluate(context)
+                if signal is None:
+                    signal = Signal(action=SignalAction.HOLD, confidence=0.0, reason="strategy_returned_none", metadata={})
                 out = signal.to_dict()
                 out["symbol"] = self._symbol
                 snap = context.market_snapshot

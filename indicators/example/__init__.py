@@ -1,9 +1,8 @@
-"""Example indicator set: base, MA, MACD, ATR, volume. MACD cross in macd_cross module (avoids circular import with strategy/processor)."""
+"""Example indicator set: base, MA, MACD, volume, RSI, KDJ."""
 
 from indicators.example.base import BaseIndicator, CandleLike
 from indicators.example.ma import EMAIndicator, SMAIndicator
 from indicators.example.macd import MACDIndicator
-from indicators.example.atr import ATRIndicator
 from indicators.example.volume import VolumeSMAIndicator
 from indicators.example.rsi import RSIIndicator
 from indicators.example.kdj import KDJIndicator
@@ -14,7 +13,6 @@ __all__ = [
     "SMAIndicator",
     "EMAIndicator",
     "MACDIndicator",
-    "ATRIndicator",
     "VolumeSMAIndicator",
     "RSIIndicator",
     "KDJIndicator",
