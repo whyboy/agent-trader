@@ -16,6 +16,7 @@ from indicators.example.ma import EMAIndicator, SMAIndicator
 from indicators.example.macd import MACDIndicator
 from indicators.example.volume import VolumeSMAIndicator
 from indicators.example.rsi import RSIIndicator
+from indicators.example.kdj import KDJIndicator
 from indicators.data import MarketSnapshot, SnapshotProcessedV1
 
 logger = logging.getLogger(__name__)
@@ -28,6 +29,7 @@ BUILTIN_INDICATORS: Dict[str, Type[BaseIndicator]] = {
     "atr": ATRIndicator,
     "volume_sma": VolumeSMAIndicator,
     "rsi": RSIIndicator,
+    "kdj": KDJIndicator,
 }
 
 # 所有 example 指标：固定列表，每周期都计算，结果写入 SnapshotProcessedV1 的 MarketSnapshot.indicators
@@ -37,7 +39,10 @@ ALL_EXAMPLE_INDICATORS: List[Dict[str, Any]] = [
     # {"type": "macd", "name": "macd", "params": {"fast_period": 12, "slow_period": 26, "signal_period": 9}},
     # {"type": "atr", "name": "atr_14", "params": {"period": 14}},
     # {"type": "volume_sma", "name": "volume_sma_20", "params": {"period": 20}},
-    {"type": "rsi", "name": "rsi_14", "params": {"period": 14}},
+    {"type": "rsi", "name": "rsi_6", "params": {"period": 6}},
+    {"type": "rsi", "name": "rsi_12", "params": {"period": 12}},
+    {"type": "rsi", "name": "rsi_24", "params": {"period": 24}},
+    {"type": "kdj", "name": "kdj", "params": {"rsv_period": 9}},
 ]
 
 
@@ -100,25 +105,38 @@ class IndicatorManager:
             except Empty:
                 continue
 
-            # update the buffer and indicators，merge the same timestamp candles
+            # 按 ts 归并：同一 ts 的多次推送合并为一根 K 线（open=首次，high=max，low=min，close=最后一次，volume=按累加）
             ch = candle.channel
             buf = self._buffers[ch]
             if buf and buf[-1].ts == candle.ts:
-                buf.pop()
-            buf.append(candle)
+                last = buf.pop()
+                merged_volume = last.volume + candle.volume  # 同一 ts 内 volume 累加
+                merged_candle = CandleLike(
+                    ts=last.ts,
+                    open=last.open,
+                    high=max(last.high, candle.high),
+                    low=min(last.low, candle.low),
+                    close=candle.close,
+                    volume=merged_volume,
+                    channel=ch,
+                )
+                buf.append(merged_candle)
+            else:
+                buf.append(candle)
+            current = buf[-1]
             for ind in self._indicators_per_channel[ch]:
-                ind.update(candle)
+                ind.update(current)
             indicators = {}
             for ind in self._indicators_per_channel[ch]:
                 indicators.update(ind.get_value())
             snapshot = MarketSnapshot(
                 channel=ch,
-                ts=candle.ts,
-                open=candle.open,
-                high=candle.high,
-                low=candle.low,
-                close=candle.close,
-                volume=candle.volume,
+                ts=current.ts,
+                open=current.open,
+                high=current.high,
+                low=current.low,
+                close=current.close,
+                volume=current.volume,
                 indicators=indicators
             )
 
