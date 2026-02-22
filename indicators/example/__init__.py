@@ -6,6 +6,7 @@ from indicators.example.macd import MACDIndicator
 from indicators.example.atr import ATRIndicator
 from indicators.example.volume import VolumeSMAIndicator
 from indicators.example.rsi import RSIIndicator
+from indicators.example.kdj import KDJIndicator
 
 __all__ = [
     "BaseIndicator",
@@ -16,4 +17,5 @@ __all__ = [
     "ATRIndicator",
     "VolumeSMAIndicator",
     "RSIIndicator",
+    "KDJIndicator",
 ]

@@ -3,11 +3,14 @@
 持仓后某 K 线收盘价触及 20 均线 -> 下一根开盘价卖出。
 """
 
+import logging
 from typing import Any, Dict, List
 
 from indicators import MarketSnapshot
 from strategy.data import Signal, SignalAction
 from strategy.example.interface.base import BaseStrategy, StrategyContext
+
+logger = logging.getLogger(__name__)
 
 
 def _is_bearish(s: MarketSnapshot) -> bool:
@@ -29,7 +32,7 @@ class ReversalRSIStrategy(BaseStrategy):
 
     def __init__(self, config: Dict[str, Any] | None = None) -> None:
         super().__init__(config)
-        self.rsi_name = str(self.config.get("rsi_name", "rsi_14"))
+        self.rsi_name = str(self.config.get("rsi_name", "rsi_12"))
         self.ma_name = str(self.config.get("ma_name", "ma_20"))
         self.consecutive_bearish = int(self.config.get("consecutive_bearish", 4))
         self._in_position = False
@@ -44,15 +47,34 @@ class ReversalRSIStrategy(BaseStrategy):
         rsi = ind.get(self.rsi_name)
         ma20 = ind.get(self.ma_name)
 
-        # 持仓：检查是否触及 20 均线 -> 卖出
+        # 当 rsi_12 < 30 时打印 rsi_6、rsi_12、rsi_24 及 KDJ(k,d,j)
+        rsi_12_val = ind.get("rsi_12")
+        if rsi_12_val is not None and rsi_12_val < 30:
+            rsi_6_val = ind.get("rsi_6")
+            rsi_24_val = ind.get("rsi_24")
+            kdj_k = ind.get("kdj_k")
+            kdj_d = ind.get("kdj_d")
+            kdj_j = ind.get("kdj_j")
+            logger.info(
+                "rsi_12<30 | rsi_6=%.2f rsi_12=%.2f rsi_24=%.2f | kdj_k=%.2f kdj_d=%.2f kdj_j=%.2f | ts=%s",
+                rsi_6_val if rsi_6_val is not None else 0,
+                rsi_12_val,
+                rsi_24_val if rsi_24_val is not None else 0,
+                kdj_k if kdj_k is not None else 0,
+                kdj_d if kdj_d is not None else 0,
+                kdj_j if kdj_j is not None else 0,
+                snap.ts,
+            )
+
+        # 持仓：当前收盘价超过 ma20 时卖出，否则持有
         if self._in_position and self._entry_price is not None:
-            if ma20 is not None and snap.close <= ma20:
+            if ma20 is not None and snap.close > ma20:
                 self._in_position = False
                 self._entry_price = None
                 return Signal(
                     action=SignalAction.SELL,
                     confidence=0.8,
-                    reason="close_touch_ma20_exit_next_open",
+                    reason="close_above_ma20_exit",
                     metadata={},
                 )
             return Signal(
