@@ -25,7 +25,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-CONFIG_PATH = SERVICE_DIR / "config" / "json" / "trend_macd.json"
+CONFIG_PATH = SERVICE_DIR / "config" / "json" / "reversal_rsi_3m.json"
 
 
 def main() -> None:

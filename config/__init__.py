@@ -4,6 +4,7 @@ from .service_config import (
     AgentRunnerConfig,
     OkxWsConfig,
     ServiceConfig,
+    StrategyConfig,
 )
 
-__all__ = ["ServiceConfig", "OkxWsConfig", "AgentRunnerConfig"]
+__all__ = ["ServiceConfig", "OkxWsConfig", "AgentRunnerConfig", "StrategyConfig"]
