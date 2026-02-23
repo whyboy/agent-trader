@@ -11,7 +11,7 @@ from queue import Empty, Queue
 from typing import Any, Dict, Literal, Optional
 from indicators import MarketSnapshot, SnapshotProcessedV1, SnapshotProcessedV2
 from agent.data.agent_result import hold_result
-from agent.prompt.realtime_prompt import get_realtime_system_prompt
+from agent.prompt.reversal_kdj_prompt import get_realtime_system_prompt
 
 logger = logging.getLogger(__name__)
 

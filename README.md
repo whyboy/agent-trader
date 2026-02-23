@@ -8,11 +8,11 @@
 # 安装依赖
 pip install websockets
 
-# 启动服务（默认使用 config/json/reversal_rsi_3m.json，可在 main.py 中修改 CONFIG_PATH）
+# 启动服务（默认使用 config/json/reversal_kdj_3m.json，可在 main.py 中修改 CONFIG_PATH）
 python main.py
 ```
 
-策略配置：在 `config/json/` 下放置 JSON，其中 `strategy.strategy_type` 可为 `reversal_rsi` 或留空表示 `hold`。
+策略配置：在 `config/json/` 下放置 JSON，其中 `strategy.strategy_type` 可为 `reversal_kdj` 或留空表示 `hold`。
 
 **频道说明**：`candle1m` 每根 K 线收盘时推送一次（约 1 次/分钟）；`ticker` 随价格变动实时推送，适合查看连续行情。
 

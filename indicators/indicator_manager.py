@@ -43,7 +43,7 @@ ALL_EXAMPLE_INDICATORS: List[Dict[str, Any]] = [
     {"type": "rsi", "name": "rsi_12", "params": {"period": 12}},
     {"type": "rsi", "name": "rsi_24", "params": {"period": 24}},
     {"type": "kdj", "name": "kdj", "params": {"rsv_period": 9}},
-    {"type": "candle_pct", "name": "pct", "params": {"window": 5}},
+    {"type": "candle_pct", "name": "pct", "params": {"window": 10}},
 ]
 
 

@@ -25,7 +25,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-CONFIG_PATH = SERVICE_DIR / "config" / "json" / "reversal_rsi_3m.json"
+CONFIG_PATH = SERVICE_DIR / "config" / "json" / "reversal_kdj_3m.json"
 
 
 def main() -> None:
