@@ -1,4 +1,4 @@
-"""Agent 分析结果：action、reason、snapshot_ts、confidence 等，与 SnapshotProcessedV2.agent_result 对应。"""
+"""Agent 分析结果：action、reason、snapshot_ts、confidence 等。"""
 
 from dataclasses import dataclass, field
 from typing import Any, Dict
@@ -40,7 +40,7 @@ class AgentResult:
 
 
 def hold_result(snapshot_ts: str, reason: str = "default") -> Dict[str, Any]:
-    """构造 hold 结果的 dict，供 AgentManager 直接放入 SnapshotProcessedV2.agent_result。"""
+    """构造 hold 结果的 dict，供 AgentManager 使用。"""
     return AgentResult(
         action="hold",
         reason=reason,

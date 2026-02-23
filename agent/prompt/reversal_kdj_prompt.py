@@ -14,14 +14,16 @@ try:
 except Exception:
     STOP_SIGNAL = "<FINISH_SIGNAL>"
 
-# 与 reversal_kdj 策略 52-86 行使用的指标一致，用于急跌分析
+# 与 reversal_kdj 策略使用的指标一致，用于急跌分析
 SHARP_DECLINE_INDICATOR_KEYS: List[str] = [
     "rsi_6", "rsi_12", "rsi_24",
     "kdj_k", "kdj_d", "kdj_j",
+    "ma_20",
+    "price_vs_ma20_pct",  # (ma_20 - close) / close * 100，策略中计算后传入
     "pct_1", "pct_2", "pct_3", "pct_4", "pct_5",
     "pct_6", "pct_7", "pct_8", "pct_9", "pct_10",
     "pct_abs_avg",
-    "pct_pct_sum_3", "pct_pct_sum_5", "pct_pct_sum_10",
+    "pct_sum_3", "pct_sum_5", "pct_sum_10",
 ]
 
 REALTIME_SYSTEM_PROMPT = """
@@ -72,6 +74,8 @@ SHARP_DECLINE_ANALYSIS_PROMPT = """
 - **pct_1 ~ pct_10**：最近 10 根 K 线各自相对前一根的涨跌幅（%），带正负号。pct_1=最新一根，pct_10=更早。负值表示该根 K 线收跌。
 
 - **pct_sum_3 / pct_sum_5 / pct_sum_10**：**已稳定的**最近 3 根、5 根、10 根 K 线的涨跌幅（带符号）**之和**。例如 pct_sum_3 = -0.5 表示最近 3 根已收盘 K 线累计跌了 0.5%。
+
+- **ma_20**：20 根 K 线收盘价的简单均线。**price_vs_ma20_pct**：当前价相对 20 日均线的偏离百分比，(ma_20 - close)/close×100，正值表示价格在均线下方。
 
 - **RSI**（rsi_6, rsi_12, rsi_24）、**KDJ**（kdj_k, kdj_d, kdj_j）：辅助判断超卖与拐点。
 

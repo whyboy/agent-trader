@@ -8,7 +8,6 @@ from indicators.indicator_manager import IndicatorManager
 from indicators.data import (
     MarketSnapshot,
     SnapshotProcessedV1,
-    SnapshotProcessedV2,
 )
 
 __all__ = [
@@ -21,5 +20,4 @@ __all__ = [
     "IndicatorManager",
     "MarketSnapshot",
     "SnapshotProcessedV1",
-    "SnapshotProcessedV2",
 ]

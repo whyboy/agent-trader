@@ -1,24 +1,24 @@
-"""Strategy input: StrategyContext (trigger_channel + snapshot_processed_v2 + optional history)."""
+"""Strategy input: StrategyContext (trigger_channel + snapshot_processed_v1 + optional history)."""
 
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
-from indicators import MarketSnapshot, SnapshotProcessedV1, SnapshotProcessedV2
+from indicators import MarketSnapshot, SnapshotProcessedV1
 
 
 @dataclass
 class StrategyContext:
-    """策略上下文：当前 V2 快照、触发 channel、可选的 V1 历史（由旧到新）、以及策略间共享的 state。"""
+    """策略上下文：当前 V1 快照、触发 channel、可选的 V1 历史（由旧到新）、以及策略间共享的 state。"""
 
     trigger_channel: str
-    snapshot_processed_v2: SnapshotProcessedV2
+    snapshot_processed_v1: SnapshotProcessedV1
     snapshot_processed_v1_history: List[SnapshotProcessedV1] = field(default_factory=list)
     state: Dict[str, Any] = field(default_factory=dict)
 
     @property
     def market_snapshot(self) -> MarketSnapshot | None:
         """当前触发 channel 的 MarketSnapshot。"""
-        return self.snapshot_processed_v2.snapshot_processed_v1.get(self.trigger_channel)
+        return self.snapshot_processed_v1.get(self.trigger_channel)
 
     @property
     def market_snapshot_history(self) -> List[MarketSnapshot]:
