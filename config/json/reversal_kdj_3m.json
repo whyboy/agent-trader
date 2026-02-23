@@ -7,7 +7,7 @@
     "reconnect_delay": 5
   },
   "strategy": {
-    "strategy_type": "reversal_rsi",
+    "strategy_type": "reversal_kdj",
     "strategy_params": {
       "rsi_name": "rsi_14",
       "ma_name": "ma_20",

@@ -1,5 +1,5 @@
-"""Example strategies: reversal_rsi."""
+"""Example strategies: reversal_kdj."""
 
-from strategy.example.reversal_rsi import ReversalRSIStrategy
+from strategy.example.reversal_kdj import ReversalKDJStrategy
 
-__all__ = ["ReversalRSIStrategy"]
+__all__ = ["ReversalKDJStrategy"]

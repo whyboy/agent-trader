@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Type
 from indicators import SnapshotProcessedV1, SnapshotProcessedV2
 from strategy.data import Signal, SignalAction, StrategyContext
 from strategy.example.hold_strategy import HoldStrategy
-from strategy.example.reversal_rsi import ReversalRSIStrategy
+from strategy.example.reversal_kdj import ReversalKDJStrategy
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class StrategyManager:
             return
         cls._REGISTRY.update({
             "hold": HoldStrategy,
-            "reversal_rsi": ReversalRSIStrategy,
+            "reversal_kdj": ReversalKDJStrategy,
         })
 
     def _create_strategy(self, strategy_type: str, params: Dict[str, Any]) -> Any:
