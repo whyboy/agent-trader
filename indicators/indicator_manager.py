@@ -39,6 +39,7 @@ ALL_EXAMPLE_INDICATORS: List[Dict[str, Any]] = [
     # {"type": "macd", "name": "macd", "params": {"fast_period": 12, "slow_period": 26, "signal_period": 9}},
     # {"type": "atr", "name": "atr_14", "params": {"period": 14}},
     # {"type": "volume_sma", "name": "volume_sma_20", "params": {"period": 20}},
+    {"type": "sma", "name": "ma_20", "params": {"period": 20}},
     {"type": "rsi", "name": "rsi_6", "params": {"period": 6}},
     {"type": "rsi", "name": "rsi_12", "params": {"period": 12}},
     {"type": "rsi", "name": "rsi_24", "params": {"period": 24}},
@@ -130,6 +131,11 @@ class IndicatorManager:
             indicators = {}
             for ind in self._indicators_per_channel[ch]:
                 indicators.update(ind.get_value())
+            # ma_20 来自 ALL_EXAMPLE_INDICATORS 中的 sma（name="ma_20"），已通过 get_value() 合并；此处注入 price_vs_ma20_pct
+            _ma20 = indicators.get("ma_20")
+            if _ma20 is not None and current.close and current.close != 0:
+                indicators["price_vs_ma20_pct"] = round((_ma20 - current.close) / current.close * 100.0, 6)
+
             snapshot = MarketSnapshot(
                 channel=ch,
                 ts=current.ts,
@@ -152,6 +158,9 @@ class IndicatorManager:
                         ind_vals = {}
                         for ind in self._indicators_per_channel[c]:
                             ind_vals.update(ind.get_value())
+                        _ma20 = ind_vals.get("ma_20")
+                        if _ma20 is not None and last.close and last.close != 0:
+                            ind_vals["price_vs_ma20_pct"] = round((_ma20 - last.close) / last.close * 100.0, 6)
 
                         compose_snapshot[c] = MarketSnapshot(
                             channel=c,

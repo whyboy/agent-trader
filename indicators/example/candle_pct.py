@@ -65,11 +65,11 @@ class CandlePctIndicator(BaseIndicator):
         # 前 3、5、10 根已稳定 K 线的涨跌幅之和（倒数第1～3/1～5/1～10 根）
         pcts_list = list(self._pcts)
         for n in (3, 5, 10):
-            result[f"{self.name}_pct_sum_{n}"] = (
+            result[f"{self.name}_sum_{n}"] = (
                 round(sum(pcts_list[-n:]), 6) if len(pcts_list) >= n else None
             )
         parts = [f"{k}={v:.6f}%" if v is not None else f"{k}=None" for k, v in result.items()]
-        logger.info("CandlePct %s 计算结果: %s", self.name, ", ".join(parts))
+        # logger.info("CandlePct %s 计算结果: %s", self.name, ", ".join(parts))
         return result
 
 

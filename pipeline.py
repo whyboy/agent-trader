@@ -16,7 +16,7 @@ class Pipeline:
     """
     编排层：除 websocket 外，各模块以 Manager 为入口。
     - IndicatorManager：生成指标，产出 SnapshotProcessedV1
-    - StrategyManager：按 strategy_type 创建策略，从 v2 队列取 SnapshotProcessedV2，
+    - StrategyManager：按 strategy_type 创建策略，从 v1 队列取 SnapshotProcessedV1，
       各策略内部按规则生成 Signal，写入 signal_queue
     - OrderManager：从 signal_queue 消费信号，策略执行完成后执行下单（或 dry_run 仅日志）
     """
@@ -25,7 +25,6 @@ class Pipeline:
         self.config = config
         self.snapshot_queue: Queue = Queue(maxsize=10000)
         self.snapshot_processed_v1_queue: Queue = Queue(maxsize=1000)
-        self.snapshot_processed_v2_queue: Queue = Queue(maxsize=1000)
         self.signal_queue: Queue = Queue(maxsize=1000)
         self._ws: OkxWsClient = None
         self._indicator_manager: IndicatorManager = None
@@ -56,7 +55,7 @@ class Pipeline:
         sc = self.config.strategy
         self._strategy_manager = StrategyManager(
             okx.symbol,
-            self.snapshot_processed_v2_queue,
+            self.snapshot_processed_v1_queue,
             self.signal_queue,
             sc.strategy_type or "hold",
             strategy_params=sc.strategy_params,
@@ -65,7 +64,6 @@ class Pipeline:
         )
 
         self._order_manager = OrderManager(input_queue=self.signal_queue)
-
         self._ws.start()
         self._indicator_manager.start()
         self._strategy_manager.start()

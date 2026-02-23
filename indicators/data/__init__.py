@@ -1,7 +1,6 @@
-"""Indicator pipeline data: MarketSnapshot, SnapshotProcessedV1, SnapshotProcessedV2."""
+"""Indicator pipeline data: MarketSnapshot, SnapshotProcessedV1."""
 
 from indicators.data.snapshot import MarketSnapshot
 from indicators.data.snapshot_processed_v1 import SnapshotProcessedV1
-from indicators.data.snapshot_processed_v2 import SnapshotProcessedV2
 
-__all__ = ["MarketSnapshot", "SnapshotProcessedV1", "SnapshotProcessedV2"]
+__all__ = ["MarketSnapshot", "SnapshotProcessedV1"]
