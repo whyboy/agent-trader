@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
+from agent import AgentManager
 from agent.prompt.reversal_kdj_prompt import get_sharp_decline_analysis_prompt
 from indicators import MarketSnapshot
 from strategy.data import Signal, SignalAction
@@ -54,6 +55,7 @@ class ReversalKDJStrategy(BaseStrategy):
         self.consecutive_bearish = int(self.config.get("consecutive_bearish", 4))
         self._in_position = False
         self._entry_price: float | None = None
+        self._agent_manager = AgentManager()
 
     def evaluate(self, context: StrategyContext) -> Signal:
         snap = context.market_snapshot
@@ -103,7 +105,7 @@ class ReversalKDJStrategy(BaseStrategy):
                 snap.ts,
             )
 
-            # 套用急跌分析 prompt 生成
+            # 构建急跌分析 prompt 并调用模型获取返回值
             sharp_decline_prompt = get_sharp_decline_analysis_prompt(
                 ts=snap.ts,
                 symbol=snap.channel,
@@ -116,6 +118,8 @@ class ReversalKDJStrategy(BaseStrategy):
             )
             logger.info("急跌分析 prompt (rsi_12<30): %s", sharp_decline_prompt)
             _write_sharp_decline_prompt_to_file(snap.ts, sharp_decline_prompt)
+            response_text = self._agent_manager.invoke(model="deepseek", prompt=sharp_decline_prompt)
+            logger.info("急跌分析 模型回复: %s", response_text)
 
     
 
