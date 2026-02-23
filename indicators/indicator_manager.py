@@ -16,6 +16,7 @@ from indicators.example.macd import MACDIndicator
 from indicators.example.volume import VolumeSMAIndicator
 from indicators.example.rsi import RSIIndicator
 from indicators.example.kdj import KDJIndicator
+from indicators.example.candle_pct import CandlePctIndicator
 from indicators.data import MarketSnapshot, SnapshotProcessedV1
 
 logger = logging.getLogger(__name__)
@@ -28,6 +29,7 @@ BUILTIN_INDICATORS: Dict[str, Type[BaseIndicator]] = {
     "volume_sma": VolumeSMAIndicator,
     "rsi": RSIIndicator,
     "kdj": KDJIndicator,
+    "candle_pct": CandlePctIndicator,
 }
 
 # 所有 example 指标：固定列表，每周期都计算，结果写入 SnapshotProcessedV1 的 MarketSnapshot.indicators
@@ -41,6 +43,7 @@ ALL_EXAMPLE_INDICATORS: List[Dict[str, Any]] = [
     {"type": "rsi", "name": "rsi_12", "params": {"period": 12}},
     {"type": "rsi", "name": "rsi_24", "params": {"period": 24}},
     {"type": "kdj", "name": "kdj", "params": {"rsv_period": 9}},
+    {"type": "candle_pct", "name": "pct", "params": {"window": 5}},
 ]
 
 
